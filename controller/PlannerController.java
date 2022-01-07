@@ -1,4 +1,4 @@
-package service;
+package controller;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -6,17 +6,18 @@ import java.util.Set;
 
 import model.Task;
 import model.dto.TaskDto;
+import service.TaskService;
 import service.impl.TaskServiceImpl;
 import util.InputUtil;
 import util.MenuUtil;
 import util.OutputUtil;
 
-public class PlannerService {
+public class PlannerController {
 
     private TaskService taskService;
     private LocalDate projectStartDate;
 
-    public PlannerService() {
+    public PlannerController() {
         taskService = new TaskServiceImpl();
     }
 

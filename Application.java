@@ -1,8 +1,8 @@
-import service.PlannerService;
+import controller.PlannerController;
 
 public class Application {
     public static void main(String[] args) {
-        PlannerService plannerService = new PlannerService();
-        plannerService.start();
+        PlannerController plannerController = new PlannerController();
+        plannerController.start();
     }
 }
