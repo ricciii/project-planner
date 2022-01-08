@@ -29,7 +29,7 @@ public class TaskRepository {
             }
         }
 
-        if (index > -1) {
+        if (task != null) {
             if (task.getSubTaskIds() != null && !task.getSubTaskIds().isEmpty()) {
                 throw new TaskHasDependencyException("Can't delete. Has an existing dependency.");
             } else {

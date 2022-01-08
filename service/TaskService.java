@@ -1,11 +1,10 @@
 package service;
 
+import model.Task;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
-
-import model.Task;
-import model.dto.TaskDto;
 
 public interface TaskService {
     void addTask(String name, String duration);
@@ -14,7 +13,7 @@ public interface TaskService {
 
     Task getTask(String id);
 
-    List<TaskDto> getTasks();
+    List<Task> getTasks();
 
     void deleteTask(String id);
 
@@ -22,5 +21,5 @@ public interface TaskService {
 
     void deleteSubTask(String id, String subTaskId);
 
-    Set<TaskDto> getSortedAndCalculatedTasks(LocalDate startDate);
+    Set<Task> getSortedAndCalculatedTasks(LocalDate startDate);
 }

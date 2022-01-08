@@ -1,20 +1,19 @@
 package controller;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Set;
-
 import model.Task;
-import model.dto.TaskDto;
 import service.TaskService;
 import service.impl.TaskServiceImpl;
 import util.InputUtil;
 import util.MenuUtil;
 import util.OutputUtil;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Set;
+
 public class PlannerController {
 
-    private TaskService taskService;
+    private final TaskService taskService;
     private LocalDate projectStartDate;
 
     public PlannerController() {
@@ -91,12 +90,12 @@ public class PlannerController {
     }
 
     private void viewTasks() {
-        List<TaskDto> tasks = taskService.getTasks();
+        List<Task> tasks = taskService.getTasks();
         OutputUtil.showTasksDetails(tasks);
     }
 
     private void viewPlanner() {
-        Set<TaskDto> tasks = taskService.getSortedAndCalculatedTasks(projectStartDate);
+        Set<Task> tasks = taskService.getSortedAndCalculatedTasks(projectStartDate);
         OutputUtil.showPlanner(tasks);
     }
 

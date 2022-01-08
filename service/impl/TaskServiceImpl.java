@@ -1,21 +1,20 @@
 package service.impl;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
 import model.Task;
-import model.dto.TaskDto;
 import repository.TaskHasDependencyException;
 import repository.TaskNotFoundException;
 import repository.TaskRepository;
 import service.TaskService;
 import util.StringUtil;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 public class TaskServiceImpl implements TaskService {
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
     public TaskServiceImpl() {
         taskRepository = new TaskRepository();
@@ -174,12 +173,8 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto> getTasks() {
-        List<TaskDto> taskDtos = new ArrayList<>();
-        for (Task task : taskRepository.getTasks()) {
-            taskDtos.add(taskToDto(task));
-        }
-        return taskDtos;
+    public List<Task> getTasks() {
+        return new ArrayList<>(taskRepository.getTasks());
     }
 
     @Override
@@ -196,20 +191,20 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Set<TaskDto> getSortedAndCalculatedTasks(LocalDate startDate) {
+    public Set<Task> getSortedAndCalculatedTasks(LocalDate startDate) {
         return calculateAndSortTasks(taskRepository.getTasks(), startDate);
     }
 
-    private Set<TaskDto> calculateAndSortTasks(List<Task> tasks, LocalDate startDate) {
-        Set<TaskDto> sortedTasks = new LinkedHashSet<TaskDto>();
+    private Set<Task> calculateAndSortTasks(List<Task> tasks, LocalDate startDate) {
+        Set<Task> sortedTasks = new LinkedHashSet<>();
         for (Task task : tasks) {
-            traverseTaskList(task, task, sortedTasks, startDate);
+            traverseTaskList(task, null, sortedTasks, startDate);
         }
 
         return sortedTasks;
     }
 
-    private void traverseTaskList(Task task, Task previousTask, Set<TaskDto> sortedTasks, LocalDate startDate) {
+    private void traverseTaskList(Task task, Task previousTask, Set<Task> sortedTasks, LocalDate startDate) {
         Task nextTask = null;
         if (task.getSubTaskIds() != null) {
             for (Long subTaskId : task.getSubTaskIds()) {
@@ -218,34 +213,19 @@ public class TaskServiceImpl implements TaskService {
             }
         }
 
-        TaskDto taskDto = taskToDto(task);
-
-        if (nextTask == null || previousTask == null) {
-            taskDto.setStartDate(startDate);
-            taskDto.setEndDate(startDate.plusDays(taskDto.getDuration()));
-            if (previousTask != null) {
-                if (previousTask.getStartDate() == null
-                        || (previousTask.getStartDate() != null
-                                && taskDto.getEndDate().compareTo(previousTask.getStartDate()) > 0)) {
-                    previousTask.setStartDate(taskDto.getEndDate());
-                }
-            }
-        } else {
-            taskDto.setStartDate(task.getStartDate().plusDays(1));
-            taskDto.setEndDate(taskDto.getStartDate().plusDays(taskDto.getDuration()));
-            previousTask.setStartDate(taskDto.getEndDate());
+        if (nextTask == null) {
             task.setStartDate(startDate);
+            task.setEndDate(startDate.plusDays(task.getDuration()));
+        } else {
+            task.setEndDate(task.getStartDate().plusDays(task.getDuration()));
         }
 
-        sortedTasks.add(taskDto);
-    }
+        if (previousTask != null && (previousTask.getStartDate() == null
+                || (previousTask.getStartDate() != null
+                        && task.getEndDate().plusDays(1).compareTo(previousTask.getStartDate()) > 0))) {
+            previousTask.setStartDate(task.getEndDate().plusDays(1));
+        }
 
-    private TaskDto taskToDto(Task task) {
-        TaskDto taskDto = new TaskDto();
-        taskDto.setId(task.getId());
-        taskDto.setName(task.getName());
-        taskDto.setDuration(task.getDuration());
-        taskDto.setSubTaskIds(task.getSubTaskIds());
-        return taskDto;
+        sortedTasks.add(task);
     }
 }
