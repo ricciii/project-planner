@@ -20,6 +20,10 @@ public class PlannerController {
         taskService = new TaskServiceImpl();
     }
 
+    public PlannerController(TaskService taskService) {
+        this.taskService = taskService;
+    }
+
     public void start() {
         projectStartDate = InputUtil.getProjectStartDate();
         if (projectStartDate != null) {

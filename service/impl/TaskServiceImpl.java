@@ -20,6 +20,10 @@ public class TaskServiceImpl implements TaskService {
         taskRepository = new TaskRepository();
     }
 
+    public TaskServiceImpl(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
     @Override
     public void addTask(String name, String duration) {
         if (areTaskFieldsValid(name, duration, true)) {
