@@ -46,7 +46,6 @@ public class TaskServiceImpl implements TaskService {
             if (!StringUtil.isStringEmpty(name)) {
                 task.setDuration(Integer.parseInt(duration));
             }
-            taskRepository.addTask(task);
         }
     }
 
